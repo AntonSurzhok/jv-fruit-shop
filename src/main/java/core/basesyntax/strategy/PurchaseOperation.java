@@ -7,10 +7,16 @@ public class PurchaseOperation implements OperationHandler {
 
     @Override
     public void handle(FruitTransaction transaction) {
-        Storage.fruits.put(
+        int current = Storage.getFruitQuantity(transaction.getFruit());
+
+        if (current - transaction.getQuantity() < 0) {
+            throw new RuntimeException(
+                    "Not enough " + transaction.getFruit() + " in storage");
+        }
+
+        Storage.putFruit(
                 transaction.getFruit(),
-                Storage.fruits.get(transaction.getFruit())
-                        - transaction.getQuantity()
+                current - transaction.getQuantity()
         );
     }
 }

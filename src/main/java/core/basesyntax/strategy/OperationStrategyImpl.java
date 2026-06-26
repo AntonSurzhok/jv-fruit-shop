@@ -15,8 +15,14 @@ public class OperationStrategyImpl implements OperationStrategy {
     }
 
     @Override
-    public OperationHandler get(
-            FruitTransaction.Operation operation) {
-        return handlers.get(operation);
+    public OperationHandler get(FruitTransaction.Operation operation) {
+        OperationHandler handler = handlers.get(operation);
+
+        if (handler == null) {
+            throw new RuntimeException(
+                    "Unsupported operation: " + operation);
+        }
+
+        return handler;
     }
 }

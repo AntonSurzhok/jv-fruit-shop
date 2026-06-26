@@ -23,47 +23,35 @@ import java.util.List;
 import java.util.Map;
 
 public class Main {
+    private static final String INPUT_FILE =
+            "src/main/resources/reportToRead.csv";
+    private static final String OUTPUT_FILE =
+            "src/main/resources/finalReport.csv";
+
     public static void main(String[] args) {
         FileReader fileReader = new FileReaderImpl();
-        List<String> inputData = fileReader.read("reportToRead.csv");
+        List<String> inputData = fileReader.read(INPUT_FILE);
 
         DataConverter dataConverter = new DataConverterImpl();
 
         Map<FruitTransaction.Operation, OperationHandler> handlers = new HashMap<>();
-        handlers.put(
-                FruitTransaction.Operation.BALANCE,
-                new BalanceOperation()
-        );
-        handlers.put(
-                FruitTransaction.Operation.SUPPLY,
-                new SupplyOperation()
-        );
-        handlers.put(
-                FruitTransaction.Operation.PURCHASE,
-                new PurchaseOperation()
-        );
-        handlers.put(
-                FruitTransaction.Operation.RETURN,
-                new ReturnOperation()
-        );
+        handlers.put(FruitTransaction.Operation.BALANCE, new BalanceOperation());
+        handlers.put(FruitTransaction.Operation.SUPPLY, new SupplyOperation());
+        handlers.put(FruitTransaction.Operation.PURCHASE, new PurchaseOperation());
+        handlers.put(FruitTransaction.Operation.RETURN, new ReturnOperation());
 
-        OperationStrategy operationStrategy =
-                new OperationStrategyImpl(handlers);
-
-        ShopService shopService =
-                new ShopServiceImpl(operationStrategy);
+        OperationStrategy operationStrategy = new OperationStrategyImpl(handlers);
+        ShopService shopService = new ShopServiceImpl(operationStrategy);
 
         List<FruitTransaction> transactions =
                 dataConverter.convertToTransaction(inputData);
 
         shopService.process(transactions);
 
-        ReportGenerator reportGenerator =
-                new ReportGeneratorImpl();
-
+        ReportGenerator reportGenerator = new ReportGeneratorImpl();
         String report = reportGenerator.getReport();
 
         FileWriter fileWriter = new FileWriterImpl();
-        fileWriter.write(report, "finalReport.csv");
+        fileWriter.write(report, OUTPUT_FILE);
     }
 }
